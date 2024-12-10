@@ -24,14 +24,14 @@ class vcard:
         pass
 
 class contact:
-    contact_id: str
-    first_name: str
-    middle_name: str
-    last_name: str
-    birth_date: str 
-    gender: str
-    contact_number: str
-    email_address: str
+    contact_id: str = ""
+    first_name: str = ""
+    middle_name: str = ""
+    last_name: str = ""
+    birth_date: str  = ""
+    gender: str = ""
+    contact_number: str = ""
+    email_address: str = ""
 
     def __init__(this, **kwargs):
         this.contact_id = kwargs.get('contact_id')
@@ -57,3 +57,13 @@ class contact:
         string_value += f"Contact Number: {self.contact_number}\n"
         string_value += f"Email Address: {self.email_address}\n"
         return string_value
+
+    def validate(self):
+        if not self.first_name or self.first_name.strip() == "":
+            raise ContactManagerError("First name is required.")
+        if not self.last_name or self.last_name.strip() == "":
+            raise ContactManagerError("Last name is required.")
+        if not self.contact_number or self.contact_number.strip() == "":
+            raise ContactManagerError("Contact number is required.")
+        if not self.email_address or self.email_address.strip() == "":
+            raise ContactManagerError("Email address is required.")
