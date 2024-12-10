@@ -1,5 +1,6 @@
-from managers import contact_manager
 from structures import contact, ContactManagerError
+from utilities import required_input
+from managers import contact_manager
 
 CONTACTS_FILE = "contacts.csv"
 
@@ -10,32 +11,32 @@ class Application:
     def __init__(this):
         this.contact_book.load_contacts(CONTACTS_FILE)
 
-    @staticmethod
-    def required_input(this, message: str, **config) -> str:
-        user_input = input(message)
-        while not user_input or user_input.strip() == "" or len(user_input) == 0:
-            if config.get("throw_error", True):
-                    print("Input is required.")
-            user_input = input(message)
-        return user_input
-
     def console_interface_find_contacts(this):
-        search_query = input("Enter name, number, or email of contact to search: ")
+        search_query = required_input("Enter name, number, or email of contact to search: ", throw_exception=False)
+        
         found_user = this.contact_book.search_contact(search_query)
-        if not found_user:
+        found_user_size = len(found_user)
+
+        if found_user_size == 0:
             print("Contact record not found!")
             return
-        print("\n")
-        print(str(found_user))
+        
+        if found_user_size > 1:
+            print(f"{found_user_size} contacts found for {search_query}:")
+            print()
+        
+        for user in found_user:
+            print(str(user))
+            print()
 
     def console_interface_add_contact(this):
-        input_first_name = Application.required_input("Enter First Name: ")
-        input_middle_name = Application.required_input("Enter Middle Name: ")
-        input_last_name = Application.required_input("Enter Last Name: ")
-        input_birth_date = Application.required_input("Enter Birth Date: ")
-        input_gender = Application.required_input("Enter Gender: ")
-        input_contact_number = Application.required_input("Enter Contact Number: ")
-        input_email = Application.required_input("Enter Email Address: ")
+        input_first_name = required_input("Enter First Name: ", throw_exception=False)
+        input_middle_name = input("Enter Middle Name: ")
+        input_last_name = required_input("Enter Last Name: ", throw_exception=False)
+        input_birth_date = input("Enter Birth Date: ")
+        input_gender = input("Enter Gender: ")
+        input_contact_number =required_input("Enter Contact Number: ", throw_exception=False)
+        input_email = required_input("Enter Email Address: ", throw_exception=False)
 
         new_user = contact()
         new_user.assign_id()
@@ -55,41 +56,21 @@ class Application:
             print(Error)  # todo: print error message only
 
     def console_interface_update_contact(this):
-        search_query = Application.required_input("Enter name, number, or email of contact to update: ")
+        search_query = required_input("Enter name, number, or email of contact to update: ")
+
         found_user = this.contact_book.search_contact(search_query)
+
         if not found_user:
             print("Contact record not found!")
             return
 
-        input_first_name = Application.required_input(f"Enter First Name ({found_user.first_name}): ")
-        input_middle_name = Application.required_input(f"Enter Middle Name ({found_user.middle_name}): ")
-        input_last_name = Application.required_input(f"Enter Last Name ({found_user.last_name}): ")
+        input_first_name = required_input(f"Enter First Name ({found_user.first_name}): ", default_value=found_user.first_name, throw_exception=False)
+        input_middle_name = input(f"Enter Middle Name ({found_user.middle_name}): ")
+        input_last_name = required_input(f"Enter Last Name ({found_user.last_name}): ", default_value=found_user.last_name, throw_exception=False)
         input_birth_date = input(f"Enter Birth Date ({found_user.birth_date}): ")
         input_gender = input(f"Enter Gender ({found_user.gender}): ")
-        input_contact_number = Application.required_input(
-            f"Enter Contact Number ({found_user.contact_number}): "
-        )
-        input_email = Application.required_input(f"Enter Email Address ({found_user.email_address}): ")
-
-        input_first_name = (
-            input_first_name if len(input_first_name) != 0 else found_user.first_name
-        )
-        input_middle_name = (
-            input_middle_name if len(input_middle_name) != 0 else found_user.middle_name
-        )
-        input_last_name = (
-            input_last_name if len(input_last_name) != 0 else found_user.last_name
-        )
-        input_birth_date = (
-            input_birth_date if len(input_birth_date) != 0 else found_user.birth_date
-        )
-        input_gender = input_gender if len(input_gender) != 0 else found_user.gender
-        input_contact_number = (
-            input_contact_number
-            if len(input_contact_number) != 0
-            else found_user.contact_number
-        )
-        input_email = input_email if len(input_email) != 0 else found_user.email_address
+        input_contact_number = required_input(f"Enter Contact Number ({found_user.contact_number}): ", default_value=found_user.contact_number, throw_exception=False)
+        input_email = required_input(f"Enter Email Address ({found_user.email_address}): ", default_value=found_user.email_address, throw_exception=False)
 
         new_user = contact(
             contact_id=found_user.contact_id,
@@ -106,21 +87,24 @@ class Application:
             this.contact_book.update_contact(found_user.contact_id, new_user)
             print("Contact updated.")
         except ContactManagerError as Error:
-            print(Error)
             print("An error occured. Contact information not registered.")
+            print(Error) # todo: print error message only
         except Exception as Error:
             print("An error occured. Contact information not registered.")
-            print(Error)
+            print(Error) # todo: print error message only
 
     def console_interface_delete_contact(this):
         search_query = input("Enter name, number, or email of contact to delete: ")
+
         found_user = this.contact_book.search_contact(search_query)
         if not found_user:
             print("Contact record not found!")
             return
-        print(str(contact(found_user)))
+        
+        print(str(found_user))
 
         confirm_key = input("Are you sure to delete this contact? [y/N] ")
+
         if confirm_key != "y":
             print("Deletion aborted. Contact is retained.")
             return

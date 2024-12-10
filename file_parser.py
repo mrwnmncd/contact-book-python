@@ -1,7 +1,6 @@
 import csv
 from structures import contact
 
-
 class contact_file_manager:
 
     def to_csv(file_path, contacts: dict[str, contact]) -> list[dict]:
@@ -9,6 +8,7 @@ class contact_file_manager:
             raise ValueError("Invalid file format. Please provide a CSV file.")
 
         with open(file_path, mode="w") as csv_file:
+            csv_file.truncate()
             csv_writer = csv.DictWriter(
                 csv_file,
                 fieldnames=[
