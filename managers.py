@@ -23,11 +23,18 @@ class contact_manager:
             contact_information.contact_number = entry["contact_number"]
             contact_information.email_address = entry["email_address"]
 
-    def search_contact(this, generic_search, **search) -> list[contact]:
+    def search_contact(this, generic_search = "", **search) -> list[contact]:
         if generic_search or search.get("contact_id") or search.get("first_name") or search.get("last_name"):
             
             def is_match(test_value, search_value):
-                return test_value.lower() == search_value.lower()
+                test_values = test_value.split(" ")
+                search_values = search_value.split(" ")
+
+                for test_value in test_values:
+                    for search_value in search_values:
+                        if test_value.lower() == search_value.lower():
+                            return True
+                return False
             
             matched_contacts = []
 
@@ -37,6 +44,7 @@ class contact_manager:
                 is_matched_email_address = is_match(contact_information.email_address, generic_search) or is_match(contact_information.email_address, search.get("email_address", ""))
                 is_matched_first_name = is_match(contact_information.first_name, generic_search) or is_match(contact_information.first_name, search.get("first_name", ""))
                 is_matched_last_name = is_match(contact_information.last_name, generic_search) or is_match(contact_information.last_name, search.get("last_name", ""))
+                # print(is_matched_contact_id, is_matched_contact_number, is_matched_email_address, is_matched_first_name, is_matched_last_name)
                 if (is_matched_contact_id or is_matched_contact_number or is_matched_email_address or is_matched_first_name or is_matched_last_name):
                     matched_contacts.append(contact_information)
         else:
@@ -46,16 +54,22 @@ class contact_manager:
 
     def add_contact(this, contact_information: contact):
 
-        retreived_contact = this.search_contact(contact_information.contact_id)
+        retreived_contacts = this.search_contact(
+            contact_id=contact_information.contact_id,
+            contact_number=contact_information.contact_number,
+            email_address=contact_information.email_address
+        )
         
-        if retreived_contact is not None: 
-            raise ContactManagerError(f"Contact of ID {contact_information} already exists!")
+        if len(retreived_contacts) > 0: 
+            print(f"Incoming contact collision with an existing contact ({retreived_contacts.contact_id})")
+            raise ContactManagerError("Contact already exists!")
         
         if contact_information.contact_number in [contact.contact_number for contact in this.__contacts.values()]:
-            raise ContactManagerError(f"Contact of number {contact_information.contact_number} already exists!")
+            raise ContactManagerError(f"Contact of number {contact_information.contact_number} already registered! Consider updating the contact information.")
         
         if contact_information.email_address in [contact.email_address for contact in this.__contacts.values()]:
-            raise ContactManagerError(f"Contact of email {contact_information.email_address} already exists!")
+            raise ContactManagerError(f"Contact of email {contact_information.email_address} already registered! Consider updating the contact information.")
+                
         
         this.__contacts.update({contact_information.contact_id: contact_information})
 

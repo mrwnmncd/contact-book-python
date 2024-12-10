@@ -14,18 +14,18 @@ class Application:
     def console_interface_find_contacts(this):
         search_query = required_input("Enter name, number, or email of contact to search: ", throw_exception=False)
         
-        found_user = this.contact_book.search_contact(search_query)
-        found_user_size = len(found_user)
+        found_users = this.contact_book.search_contact(search_query)
+        found_users_size = len(found_users)
 
-        if found_user_size == 0:
+        if found_users_size == 0:
             print("Contact record not found!")
             return
         
-        if found_user_size > 1:
-            print(f"{found_user_size} contacts found for {search_query}:")
+        if found_users_size > 1:
+            print(f"{found_users_size} contacts found for {search_query}:")
             print()
         
-        for user in found_user:
+        for user in found_users:
             print(str(user))
             print()
 
@@ -58,11 +58,27 @@ class Application:
     def console_interface_update_contact(this):
         search_query = required_input("Enter name, number, or email of contact to update: ")
 
-        found_user = this.contact_book.search_contact(search_query)
+        found_users = this.contact_book.search_contact(search_query)
+        found_user = None
 
-        if not found_user:
+        if len(found_users) == 0:
             print("Contact record not found!")
             return
+        
+        elif len(found_users) > 1:
+            print(f"{len(found_users)} contacts found for {search_query}:")
+            print()
+
+            for user in found_users:
+                print(str(user))
+                print()
+
+            contact_id = required_input("Enter Contact ID to update: ")
+            found_user = this.contact_book.search_contact(contact_id=contact_id)
+
+        elif len(found_users) == 1:
+            found_user = found_users[0]
+
 
         input_first_name = required_input(f"Enter First Name ({found_user.first_name}): ", default_value=found_user.first_name, throw_exception=False)
         input_middle_name = input(f"Enter Middle Name ({found_user.middle_name}): ")
