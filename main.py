@@ -118,35 +118,28 @@ def console_interface():
         print("\n")
         app = Application()
         print("Welcome to the Contact Book!")
-        print("1. Load Contacts")
-        print("2. Find Contact")
-        print("3. Add Contact")
-        print("4. Modify Contact")
-        print("5. Delete Contact")
+        print("1. Find Contact")
+        print("2. Add Contact")
+        print("3. Modify Contact")
+        print("4. Delete Contact")
         print("Q. Quit")
 
         choice = input("Enter your choice: ") #Q
         print("\n")
 
-        if choice == "1":
-            pass
-
-        elif choice == "2":
-            app.console_interface_find_contacts()
-
-        elif choice == "3":
-            app.console_interface_add_contact()
-
-        elif choice == "4":
-            app.console_interface_update_contact()
-
-        elif choice == "5":
-            app.console_interface_delete_contact()
-        elif choice == "Q":
-            pass
-        
-        else: 
-            print("Invalid choice!")
+        match choice:
+            case "1":
+                app.console_interface_find_contacts()
+            case "2":
+                app.console_interface_add_contact()
+            case "3":
+                app.console_interface_update_contact()
+            case "4":
+                app.console_interface_delete_contact()
+            case "Q":
+                pass
+            case _:
+                print("Invalid choice!")
 
 if __name__ == "__main__":
     console_interface()
