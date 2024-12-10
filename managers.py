@@ -61,7 +61,7 @@ class contact_manager:
         )
         
         if len(retreived_contacts) > 0: 
-            print(f"Incoming contact collision with an existing contact ({retreived_contacts.contact_id})")
+            print(f"Incoming contact collision with an existing contact ({retreived_contacts[0].contact_id})")
             raise ContactManagerError("Contact already exists!")
         
         if contact_information.contact_number in [contact.contact_number for contact in this.__contacts.values()]:

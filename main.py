@@ -74,7 +74,7 @@ class Application:
                 print()
 
             contact_id = required_input("Enter Contact ID to update: ")
-            found_user = this.contact_book.search_contact(contact_id=contact_id)
+            found_user = this.contact_book.search_contact(contact_id=contact_id)[0]
 
         elif len(found_users) == 1:
             found_user = found_users[0]
@@ -112,11 +112,27 @@ class Application:
     def console_interface_delete_contact(this):
         search_query = input("Enter name, number, or email of contact to delete: ")
 
-        found_user = this.contact_book.search_contact(search_query)
-        if not found_user:
+        found_users = this.contact_book.search_contact(search_query)
+        found_user = None
+
+        if len(found_users) == 0:
             print("Contact record not found!")
             return
         
+        elif len(found_users) > 1:
+            print(f"{len(found_users)} contacts found for {search_query}:")
+            print()
+
+            for user in found_users:
+                print(str(user))
+                print()
+
+            contact_id = required_input("Enter Contact ID to delete: ")
+            found_user = this.contact_book.search_contact(contact_id=contact_id)[0]
+
+        elif len(found_users) == 1:
+            found_user = found_users[0]
+
         print(str(found_user))
 
         confirm_key = input("Are you sure to delete this contact? [y/N] ")
