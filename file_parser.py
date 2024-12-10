@@ -7,21 +7,35 @@ class contact_file_manager:
     def to_csv(file_path, contacts: dict[str, contact]) -> list[dict]:
         if not file_path.endswith(".csv"):
             raise ValueError("Invalid file format. Please provide a CSV file.")
-        
+
         with open(file_path, mode="w") as csv_file:
-            csv_writer = csv.DictWriter(csv_file)
+            csv_writer = csv.DictWriter(
+                csv_file,
+                fieldnames=[
+                    "Contact ID",
+                    "First Name",
+                    "Middle Name",
+                    "Last Name",
+                    "Birth Date",
+                    "Gender",
+                    "Contact Number",
+                    "Email Address",
+                ],
+            )
+            csv_writer.writeheader()
             for contact_id, user_contact in contacts.items():
-                csv_writer.writerow({
-                    "Contact ID": user_contact.contact_id,
-                    "First Name": user_contact.first_name,
-                    "Middle Name": user_contact.middle_name,
-                    "Last Name": user_contact.last_name,
-                    "Birth Date": user_contact.birth_date,
-                    "Gender": user_contact.gender,
-                    "Contact Number": user_contact.contact_number,
-                    "Email Address": user_contact.email_address,
-                })
-            
+                csv_writer.writerow(
+                    {
+                        "Contact ID": user_contact.contact_id,
+                        "First Name": user_contact.first_name,
+                        "Middle Name": user_contact.middle_name,
+                        "Last Name": user_contact.last_name,
+                        "Birth Date": user_contact.birth_date,
+                        "Gender": user_contact.gender,
+                        "Contact Number": user_contact.contact_number,
+                        "Email Address": user_contact.email_address,
+                    }
+                )
 
     def from_csv(file_path) -> list[dict]:
 

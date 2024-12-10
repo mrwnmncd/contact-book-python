@@ -59,7 +59,7 @@ class Application:
         input_contact_number = input(
             f"Enter Contact Number ({found_user.contact_number}): "
         )
-        input_email = input(f"Enter Email Address ({found_user.email}): ")
+        input_email = input(f"Enter Email Address ({found_user.email_address}): ")
 
         input_first_name = (
             input_first_name if len(input_first_name) != 0 else found_user.first_name
@@ -79,9 +79,10 @@ class Application:
             if len(input_contact_number) != 0
             else found_user.contact_number
         )
-        input_email = input_email if len(input_email) != 0 else found_user.email
+        input_email = input_email if len(input_email) != 0 else found_user.email_address
 
         new_user = contact()
+        new_user.contact_id = found_user.contact_id
         new_user.first_name = input_first_name
         new_user.middle_name = input_middle_name
         new_user.last_name = input_last_name
@@ -91,10 +92,14 @@ class Application:
         new_user.email = input_email
 
         try:
-            this.contact_book.update_contact(new_user.contact_id, new_user)
+            this.contact_book.update_contact(found_user.contact_id, new_user)
             print("Contact updated.")
-        except:
+        except ContactManagerError as Error:
+            print(Error)
             print("An error occured. Contact information not registered.")
+        except Exception as Error:
+            print("An error occured. Contact information not registered.")
+            print(Error)
 
     def console_interface_delete_contact(this):
         search_query = input("Enter name, number, or email of contact to delete: ")

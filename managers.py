@@ -62,13 +62,16 @@ class contact_manager:
             raise ContactManagerError(
                 f"Contact of ID {contact_information} already exists!"
             )
-        this.__contacts[contact_information.contact_id] = contact_information
+        this.__contacts.update({contact_information.contact_id: contact_information})
+        contact_file_manager.to_csv(this.__contacts_store_file_path, this.__contacts)
 
     def update_contact(this, contact_id: str, contact_information: contact):
+        print(this.__contacts.get(contact_id))
+        print(this.__contacts)
         retreived_contact = this.__contacts.get(contact_id, None)
         if retreived_contact is None:
             raise ContactManagerError(f"Contact of ID {contact_id} does not exist!")
-        this.__contacts[contact_id] = contact_information
+        this.__contacts.update({contact_id: contact_information})
         contact_file_manager.to_csv(this.__contacts_store_file_path, this.__contacts)
 
 
