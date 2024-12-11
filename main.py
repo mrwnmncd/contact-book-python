@@ -1,6 +1,7 @@
 from structures import contact, ContactManagerError
 from utilities import required_input
 from managers import contact_manager
+import re
 
 CONTACTS_FILE = "contacts.csv"
 
@@ -36,7 +37,15 @@ class Application:
         input_birth_date = input("Enter Birth Date: ")
         input_gender = input("Enter Gender: ")
         input_contact_number =required_input("Enter Contact Number: ", throw_exception=False)
+        while not this.__is_valid_contact_number(input_contact_number):
+            print("Invalid contact number. Please enter a valid 11-digit number starting with 09.")
+            input_contact_number = required_input("Enter Contact Number: ", throw_exception=False)
         input_email = required_input("Enter Email Address: ", throw_exception=False)
+        while not this.__is_valid_email(input_email):
+            print("Invalid email address. Please enter a valid email address.")
+            input_email = required_input("Enter Email Address: ", throw_exception=False)
+
+        
 
         new_user = contact()
         new_user.assign_id()
@@ -142,6 +151,14 @@ class Application:
             return
 
         this.contact_book.delete_contact(found_user.contact_id)
+
+    @staticmethod
+    def __is_valid_contact_number(contact_number):
+        return re.match(r'^09\d{9}$', contact_number) is not None
+    
+    @staticmethod
+    def __is_valid_email(email):
+        return re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email) is not None
 
 
 def console_interface():
